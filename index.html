@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Horas de Trabajo</title>
+    <style>
+        /* Estilos generales para modo oscuro */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 90%;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #ffffff;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #6200ee;
+            color: #ffffff;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #bb86fc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Horas de Trabajo</h1>
+        <label for="horaEntrada">Hora de Entrada:</label>
+        <input type="time" id="horaEntrada" required>
+
+        <label for="horaBreak">Hora de Break (30 minutos):</label>
+        <input type="time" id="horaBreak" required>
+
+        <button onclick="calcularSalida()">Calcular Hora de Salida</button>
+
+        <div class="result" id="resultado"></div>
+    </div>
+
+    <script>
+        function calcularSalida() {
+            const entrada = document.getElementById("horaEntrada").value;
+            const breakTime = document.getElementById("horaBreak").value;
+
+            if (!entrada || !breakTime) {
+                document.getElementById("resultado").innerText = "Por favor, ingresa ambas horas.";
+                return;
+            }
+
+            const horaEntrada = new Date("1970-01-01T" + entrada + "Z");
+            const horaBreak = new Date("1970-01-01T" + breakTime + "Z");
+
+            // Duración del break en milisegundos (30 minutos)
+            const breakDuration = 30 * 60 * 1000;
+            const horaFinBreak = new Date(horaBreak.getTime() + breakDuration);
+
+            // Calcular las 8 horas de trabajo y sumar el tiempo del break
+            const horasTrabajo = 8 * 60 * 60 * 1000;
+            const tiempoFinal = new Date(horaEntrada.getTime() + horasTrabajo + breakDuration);
+
+            function formatoAmPm(date) {
+                let hours = date.getUTCHours();
+                let minutes = date.getUTCMinutes();
+                const amPm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12; // Convierte a formato de 12 horas
+                minutes = minutes.toString().padStart(2, '0');
+                return `${hours}:${minutes} ${amPm}`;
+            }
+
+            document.getElementById("resultado").innerHTML = `
+                Tu break termina a las: ${formatoAmPm(horaFinBreak)}<br>
+                Tu hora de salida es: ${formatoAmPm(tiempoFinal)}
+            `;
+        }
+    </script>
+</body>
+</html>
